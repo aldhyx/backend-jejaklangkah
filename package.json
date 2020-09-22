@@ -1,0 +1,32 @@
+{
+  "name": "jejaklangkah.id",
+  "version": "0.0.1",
+  "description": "shoes marketplace",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "migrate": "node ./src/migrations/index.js"
+  },
+  "keywords": [
+    "marketplace",
+    "e-commerce",
+    "shoes"
+  ],
+  "author": "frialdhy saythanry ketty",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2"
+  }
+}
