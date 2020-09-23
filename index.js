@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const PORT = process.env.APP_PORT || 5000;
+const urlPrefixV1 = '/rest/v1';
 
 // write log on terminal
 app.use(logger('tiny'));
@@ -25,10 +26,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-/*
-  NOTE:
-  - Write routing down below
-*/
+// NOTE: Start Router
+// import routes
+const RolesRouter = require('./src/routes/roles');
+
+// use routes
+app.use(`${urlPrefixV1}/roles`, RolesRouter);
+
+// NOTE: End Router
 
 // error middleware
 // run if no routes matching
