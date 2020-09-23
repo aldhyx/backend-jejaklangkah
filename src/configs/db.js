@@ -11,12 +11,6 @@ const dbConnection = mysql.createConnection({
 // connect to mysql server
 dbConnection.connect();
 
-const runQuery = (query, callBack) => {
-  const newQuery = `use ${process.env.DB_NAME}; ${query}`;
-  return dbConnection.query(newQuery, callBack);
-};
-
 module.exports = {
   dbConnection,
-  runQuery,
 };
