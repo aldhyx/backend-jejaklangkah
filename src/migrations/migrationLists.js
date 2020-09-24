@@ -1,4 +1,3 @@
-const roles = require('./roles');
 const users = require('./users');
 const addresses = require('./addresses');
 const stores = require('./stores');
@@ -10,7 +9,6 @@ const productReviews = require('./productReviews');
 
 module.exports = {
   tables: [
-    ...roles.Table,
     ...users.Table,
     ...addresses.Table,
     ...stores.Table,
@@ -21,7 +19,6 @@ module.exports = {
     ...productReviews.Table,
   ],
   relations: [
-    ...roles.Relation,
     ...users.Relation,
     ...addresses.Relation,
     ...stores.Relation,
