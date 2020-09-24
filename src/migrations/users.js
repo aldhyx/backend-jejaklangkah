@@ -16,14 +16,5 @@ const createUsersTable = `
     );
 `;
 
-const createUsersRelation = `
-    ALTER TABLE users
-        DROP FOREIGN KEY IF EXISTS fk_roles_on_users;
-    ALTER TABLE users
-        ADD CONSTRAINT fk_roles_on_users
-        FOREIGN KEY (role_id) REFERENCES roles(_id)
-        ON DELETE RESTRICT;
-`;
-
 exports.Table = [createUsersTable];
-exports.Relation = [createUsersRelation];
+exports.Relation = [];
