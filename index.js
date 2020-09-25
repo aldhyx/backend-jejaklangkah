@@ -28,10 +28,12 @@ app.use(bodyParser.json());
 
 // NOTE: Start Router
 // import routes
-const RolesRouter = require('./src/routes/roles');
+const AuthRouter = require('./src/routes/auth');
+const UsersRouter = require('./src/routes/users');
 
 // use routes
-app.use(`${urlPrefixV1}/roles`, RolesRouter);
+app.use(`${urlPrefixV1}/auth`, AuthRouter);
+app.use(`${urlPrefixV1}/users`, UsersRouter);
 
 // NOTE: End Router
 
