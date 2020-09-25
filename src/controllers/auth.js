@@ -18,32 +18,9 @@ exports.SignUp = async (req, res, next) => {
       birthday,
     } = req.body;
 
-    if (
-      !role ||
-      !firstname ||
-      !lastname ||
-      !email ||
-      !username ||
-      !password ||
-      !gender ||
-      !birthday
-    ) {
-      res.status(400).send({
-        status: 'error',
-        result: {
-          message: 'Invalid input parameter',
-        },
-      });
-    }
-
     // role accept only 1 or 2
     if (role < 1 || role > 2) {
-      res.status(400).send({
-        status: 'error',
-        result: {
-          message: 'Role is invalid',
-        },
-      });
+      throw new Error('Role is invalid');
     }
 
     const hashPassword = bycrypt.hashSync(password);
