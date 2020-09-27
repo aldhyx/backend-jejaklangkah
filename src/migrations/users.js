@@ -1,7 +1,7 @@
 const createUsersTable = `
     CREATE TABLE IF NOT EXISTS users(
         _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-        role ENUM('1','2','3') NOT NULL DEFAULT 3 COMMENT'1=super admin; 2=seller; 3=user',
+        role ENUM('user','seller','superadmin') NOT NULL DEFAULT 'user',
         firstname VARCHAR(60) NOT NULL,
         lastname VARCHAR(60) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,

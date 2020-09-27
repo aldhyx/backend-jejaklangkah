@@ -18,8 +18,8 @@ exports.SignUp = async (req, res, next) => {
       birthday,
     } = req.body;
 
-    // role accept only 1 or 2
-    if (role < 1 || role > 2) {
+    // role accept only user or seller
+    if (role == 'superadmin') {
       throw new Error('Role is invalid');
     }
 
