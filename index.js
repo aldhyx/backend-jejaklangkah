@@ -32,12 +32,14 @@ const AuthRouter = require('./src/routes/auth');
 const UsersRouter = require('./src/routes/users');
 const AddressesRouter = require('./src/routes/addresses');
 const CategoriesRouter = require('./src/routes/categories');
+const StoresRouter = require('./src/routes/stores');
 
 // use routes
 app.use(`${urlPrefixV1}/auth`, AuthRouter);
 app.use(`${urlPrefixV1}/users`, UsersRouter);
 app.use(`${urlPrefixV1}/addresses`, AddressesRouter);
 app.use(`${urlPrefixV1}/categories`, CategoriesRouter);
+app.use(`${urlPrefixV1}/stores`, StoresRouter);
 
 // NOTE: End Router
 
