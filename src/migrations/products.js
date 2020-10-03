@@ -7,7 +7,7 @@ const createProductsTable = `
         price VARCHAR(10) NOT NULL,
         stock VARCHAR(4) NOT NULL,
         description VARCHAR(60) NOT NULL,
-        image VARCHAR(100) NOT NULL,
+        image VARCHAR(100),
         create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         update_at DATETIME ON UPDATE CURRENT_TIMESTAMP
     );
