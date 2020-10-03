@@ -30,10 +30,12 @@ app.use(bodyParser.json());
 // import routes
 const AuthRouter = require('./src/routes/auth');
 const UsersRouter = require('./src/routes/users');
+const AddressesRouter = require('./src/routes/addresses');
 
 // use routes
 app.use(`${urlPrefixV1}/auth`, AuthRouter);
 app.use(`${urlPrefixV1}/users`, UsersRouter);
+app.use(`${urlPrefixV1}/addresses`, AddressesRouter);
 
 // NOTE: End Router
 
