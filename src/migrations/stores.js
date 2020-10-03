@@ -2,6 +2,7 @@ const createStoresTable = `
     CREATE TABLE IF NOT EXISTS stores(
         _id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         user_id INT(11) UNSIGNED,
+        name VARCHAR(30) NOT NULL,
         address VARCHAR(100) NOT NULL,
         city VARCHAR(60) NOT NULL,
         province VARCHAR(60) NOT NULL,
