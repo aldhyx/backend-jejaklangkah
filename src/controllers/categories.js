@@ -8,14 +8,10 @@ const {
 
 exports.CreateCategory = async (req, res, next) => {
   try {
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
-
     const { name } = req.body;
 
     const resultQuery = await CreateCategory(req.body);
-    console.log(resultQuery);
+
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
@@ -26,7 +22,7 @@ exports.CreateCategory = async (req, res, next) => {
       });
     } else throw new Error('Create Failed');
   } catch (error) {
-    console.log('Error on roles controller => ', error);
+    console.log('Error on categories controller => ', error);
     res.status(202).send({
       status: 'error',
       result: {
@@ -38,10 +34,6 @@ exports.CreateCategory = async (req, res, next) => {
 
 exports.DeleteCategory = async (req, res, next) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
     const resultQuery = await DeleteCategory(req.params.id);
 
     if (resultQuery) {
@@ -53,7 +45,7 @@ exports.DeleteCategory = async (req, res, next) => {
       });
     } else throw new Error('Update Failed');
   } catch (error) {
-    console.log('Error on roles controller => ', error);
+    console.log('Error on categories controller => ', error);
     res.status(202).send({
       status: 'error',
       result: {
@@ -65,14 +57,6 @@ exports.DeleteCategory = async (req, res, next) => {
 
 exports.UpdateCategory = async (req, res) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
-
     const dataToUpdate = {};
     const fillAble = ['name'];
     fillAble.forEach((v) => {
@@ -93,7 +77,7 @@ exports.UpdateCategory = async (req, res) => {
       });
     } else throw new Error('Update Failed');
   } catch (error) {
-    console.log('Error on roles controller => ', error);
+    console.log('Error on categories controller => ', error);
     res.status(202).send({
       status: 'error',
       result: {
@@ -114,7 +98,7 @@ exports.GetCategories = async (req, res) => {
       });
     } else throw new Error('Get Failed');
   } catch (error) {
-    console.log('Error on roles controller => ', error);
+    console.log('Error on categories controller => ', error);
     res.status(202).send({
       status: 'error',
       result: {
@@ -126,10 +110,6 @@ exports.GetCategories = async (req, res) => {
 
 exports.GetCategory = async (req, res) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
     const resultQuery = await GetCategory(req.params.id);
 
     if (resultQuery) {
