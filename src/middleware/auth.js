@@ -14,7 +14,8 @@ async function Authentication(req, res, next) {
   } catch (error) {
     console.log('error on auth middleware => ', error);
     res.status(401).send({
-      msg: error || 'Not Authorized',
+      status: 'failed',
+      message: error.msg || 'Not Authorized',
     });
   }
 }
