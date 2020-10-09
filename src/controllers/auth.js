@@ -1,50 +1,74 @@
-const bycrypt = require('bcryptjs');
-const { SignUp } = require('../models/auth');
+require('dotenv').config();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { SignUp, GetUserData } = require('../models/auth');
 
 exports.SignUp = async (req, res, next) => {
   try {
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
-
-    const {
-      role,
-      firstname,
-      lastname,
-      email,
-      username,
-      password,
-      gender,
-      birthday,
-    } = req.body;
-
-    // role accept only user or seller
-    if (role == 'superadmin') {
-      throw new Error('Role is invalid');
-    }
-
-    const hashPassword = bycrypt.hashSync(password);
+    const hashPassword = bcrypt.hashSync(req.body.password);
     req.body.password = hashPassword;
 
     const resultQuery = await SignUp(req.body);
-    console.log(resultQuery);
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
           id: resultQuery[1].insertId,
-          firstname,
-          lastname,
-          email,
-          username,
-          gender,
-          birthday,
+          firstname: req.body.firstname,
+          lastname: req.body.lastname,
+          email: req.body.email,
+          username: req.body.username,
+          gender: req.body.gender,
+          birthday: req.body.birthday,
         },
       });
-    } else throw new Error('Create Failed');
+    } else throw new Error('Sign Up Failed!');
   } catch (error) {
-    console.log('Error on roles controller => ', error);
+    console.log('Error on auth controller => ', error);
     res.status(202).send({
+      status: 'error',
+      result: {
+        message: error.message || 'Something wrong',
+      },
+    });
+  }
+};
+
+exports.Login = async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const result = await GetUserData(username);
+
+    if (result[1].length > 0) {
+      const dataUser = result[1][0];
+
+      if (bcrypt.compareSync(password, dataUser.password)) {
+        const token = jwt.sign(
+          {
+            id: dataUser._id,
+            username: dataUser.username,
+          },
+          process.env.JWT_KEY,
+          {
+            expiresIn: '1D',
+          }
+        );
+
+        res.status(200).send({
+          status: 'success',
+          result: {
+            accessToken: token,
+          },
+        });
+      } else {
+        throw new Error('username or password invalid!');
+      }
+    } else {
+      throw new Error('username or password invalid!');
+    }
+  } catch (error) {
+    console.log('Error on auth controller => ', error);
+    res.status(401).send({
       status: 'error',
       result: {
         message: error.message || 'Something wrong',
