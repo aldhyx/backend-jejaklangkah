@@ -35,6 +35,7 @@ const CategoriesRouter = require('./src/routes/categories');
 const StoresRouter = require('./src/routes/stores');
 const ProductsRouter = require('./src/routes/products');
 const ReviewsRouter = require('./src/routes/reviews');
+const CartsRouter = require('./src/routes/carts');
 
 // use routes
 app.use(`${urlPrefixV1}/auth`, AuthRouter);
@@ -44,6 +45,7 @@ app.use(`${urlPrefixV1}/categories`, CategoriesRouter);
 app.use(`${urlPrefixV1}/stores`, StoresRouter);
 app.use(`${urlPrefixV1}/products`, ProductsRouter);
 app.use(`${urlPrefixV1}/reviews`, ReviewsRouter);
+app.use(`${urlPrefixV1}/carts`, CartsRouter);
 
 // NOTE: End Router
 
