@@ -1,7 +1,8 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const { GetUserData } = require('../models/auth');
 
-async function Authentication(req, res, next) {
+exports.Authentication = async (req, res, next) => {
   try {
     let token = req.headers.authorization || '';
 
@@ -18,6 +19,34 @@ async function Authentication(req, res, next) {
       message: error.msg || 'Not Authorized',
     });
   }
-}
+};
 
-module.exports = Authentication;
+exports.isRoleAdmin = async (req, res, next) => {
+  try {
+    let role = await GetUserData(req.auth.username);
+    role = role[1][0]['role'];
+    if (role !== 'superadmin') throw new Error('Not Authorized');
+    next();
+  } catch (error) {
+    console.log('error on auth middleware => ', error);
+    res.status(401).send({
+      status: 'failed',
+      message: error.msg || 'Not Authorized',
+    });
+  }
+};
+
+exports.isRoleSeller = async (req, res, next) => {
+  try {
+    let role = await GetUserData(req.auth.username);
+    role = role[1][0]['role'];
+    if (role !== 'seller') throw new Error('Not Authorized');
+    next();
+  } catch (error) {
+    console.log('error on auth middleware => ', error);
+    res.status(401).send({
+      status: 'failed',
+      message: error.msg || 'Not Authorized',
+    });
+  }
+};
