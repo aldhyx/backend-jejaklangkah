@@ -32,6 +32,9 @@ const ProductsRouter = require('./src/routes/products');
 const ReviewsRouter = require('./src/routes/reviews');
 const CartsRouter = require('./src/routes/carts');
 
+app.get('/', function (req, res) {
+  res.send('Welcome User');
+});
 // use routes
 app.use(`${urlPrefixV1}/auth`, AuthRouter);
 app.use(`${urlPrefixV1}/users`, UsersRouter);
