@@ -3,6 +3,20 @@ const { dbConnection } = require('../configs/db');
 const useDB = `USE ${process.env.DB_NAME}`;
 const tableName = 'users';
 
+exports.GetUser = (id) => {
+  return new Promise((resolve, reject) => {
+    dbConnection.query(
+      `${useDB}; SELECT * FROM ${tableName} WHERE _id=?;
+      `,
+      [id],
+      (error, result) => {
+        if (error) return reject(new Error(error));
+        return resolve(result);
+      }
+    );
+  });
+};
+
 exports.GetUsers = () => {
   return new Promise((resolve, reject) => {
     dbConnection.query(

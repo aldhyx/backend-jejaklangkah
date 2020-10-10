@@ -4,8 +4,29 @@ const {
   UpdatePassword,
   DeleteUser,
   GetUsers,
+  GetUser,
 } = require('../models/users');
 const bycrypt = require('bcryptjs');
+
+exports.GetUser = async (req, res) => {
+  try {
+    const resultQuery = await GetUser(req.auth.id);
+    if (resultQuery) {
+      res.status(200).send({
+        status: 'success',
+        result: resultQuery[1],
+      });
+    } else throw new Error('Get Failed');
+  } catch (error) {
+    console.log('Error on roles controller => ', error);
+    res.status(202).send({
+      status: 'error',
+      result: {
+        message: error.message || 'Something wrong',
+      },
+    });
+  }
+};
 
 exports.GetUsers = async (req, res) => {
   try {
@@ -30,17 +51,13 @@ exports.GetUsers = async (req, res) => {
 
 exports.DeleteUser = async (req, res) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
-    const resultQuery = await DeleteUser(req.params.id);
+    const resultQuery = await DeleteUser(req.auth.id);
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
-          id: req.params.id,
+          id: req.auth.id,
         },
       });
     } else throw new Error('Update Failed');
@@ -57,10 +74,6 @@ exports.DeleteUser = async (req, res) => {
 
 exports.UpdateUser = async (req, res) => {
   try {
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
-
     const dataToUpdate = {};
     const fillAble = ['firstname', 'lastname', 'gender', 'birthday'];
     fillAble.forEach((v) => {
@@ -69,13 +82,13 @@ exports.UpdateUser = async (req, res) => {
       }
     });
 
-    const resultQuery = await UpdateUser(req.params.id, dataToUpdate);
+    const resultQuery = await UpdateUser(req.auth.id, dataToUpdate);
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
-          id: req.params.id,
+          id: req.auth.id,
           firstname: req.body.firstname,
           lastname: req.body.lastname,
           gender: req.body.gender,
@@ -96,17 +109,13 @@ exports.UpdateUser = async (req, res) => {
 
 exports.UpdateUsername = async (req, res) => {
   try {
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
-
-    const resultQuery = await UpdateUser(req.params.id, req.body);
+    const resultQuery = await UpdateUser(req.auth.id, req.body);
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
-          id: req.params.id,
+          id: req.auth.id,
           username: req.body.username,
         },
       });
@@ -124,16 +133,13 @@ exports.UpdateUsername = async (req, res) => {
 
 exports.UpdatePassword = async (req, res) => {
   try {
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
     if (req.body.password !== req.body.passwordConfirmation) {
       throw new Error('Password confirmation does not match!');
     }
 
     const hashPassword = bycrypt.hashSync(req.body.password);
 
-    const resultQuery = await UpdatePassword(req.params.id, hashPassword);
+    const resultQuery = await UpdatePassword(req.auth.id, hashPassword);
 
     if (resultQuery) {
       res.status(200).send({
@@ -156,17 +162,13 @@ exports.UpdatePassword = async (req, res) => {
 
 exports.UpdateEmail = async (req, res) => {
   try {
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
-
-    const resultQuery = await UpdateEmail(req.params.id, req.body);
+    const resultQuery = await UpdateEmail(req.auth.id, req.body);
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
-          id: req.params.id,
+          id: req.auth.id,
           email: req.body.email,
         },
       });
