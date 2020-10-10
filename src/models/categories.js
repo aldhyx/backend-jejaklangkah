@@ -81,10 +81,23 @@ exports.UpdateCategory = (id, body) => {
   });
 };
 
-exports.GetCategories = () => {
+exports.GetCategories = (params) => {
   return new Promise((resolve, reject) => {
+    const { limit, page, sort, search } = params;
+
+    const condition = `
+    ${search ? `WHERE name LIKE '%${search}%'` : ''}
+    ${sort ? `ORDER BY ${sort.key} ${sort.value}` : ''}
+    LIMIT ${parseInt(limit)} OFFSET ${(parseInt(page) - 1) * parseInt(limit)}
+    `;
+
     dbConnection.query(
-      `${useDB}; SELECT * FROM ${tableName};
+      `${useDB}; 
+      SELECT COUNT(*) AS total from ${tableName} ${condition.substring(
+        0,
+        condition.indexOf('LIMIT')
+      )};
+      SELECT * FROM ${tableName} ${condition};
       `,
       (error, result) => {
         if (error) return reject(new Error(error));
