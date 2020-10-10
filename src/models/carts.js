@@ -3,14 +3,25 @@ const { dbConnection } = require('../configs/db');
 const useDB = `USE ${process.env.DB_NAME}`;
 const tableName = 'shopping_carts';
 
-exports.GetItems = (id) => {
+exports.GetItems = (user_id) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
-      `${useDB}; SELECT * FROM cart_items WHERE shopping_cart_id=${id} ;
+      `${useDB};
+      SELECT * FROM ${tableName} WHERE user_id=?;
       `,
+      [user_id],
       (error, result) => {
-        if (error) return reject(new Error(error));
-        return resolve(result);
+        if (error || !result[1][0])
+          return reject(new Error(error || 'Carts not found!'));
+        const carts_id = result[1][0]['_id'];
+        dbConnection.query(
+          `${useDB}; SELECT * FROM cart_items WHERE shopping_cart_id=${carts_id} ;
+          `,
+          (error, result) => {
+            if (error) return reject(new Error(error));
+            return resolve(result);
+          }
+        );
       }
     );
   });
@@ -31,7 +42,7 @@ exports.AddItem = (user_id, body) => {
             `,
             [user_id],
             (error, result) => {
-              if (error || !result[1][0]) {
+              if (error) {
                 return reject(new Error(error));
               }
             }
@@ -49,6 +60,7 @@ exports.AddItem = (user_id, body) => {
             }
             const { _id } = result[1][0]; //carts id by users
 
+            console.log('store id => ', body.product_id, _id, body.quantity);
             dbConnection.query(
               `${useDB};
               INSERT INTO cart_items (product_id, shopping_cart_id, quantity) 
