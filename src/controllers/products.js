@@ -111,12 +111,42 @@ exports.UpdateProduct = async (req, res) => {
 
 exports.GetProducts = async (req, res) => {
   try {
-    const resultQuery = await GetProducts();
+    let params = {
+      page: req.query.page || 1,
+      limit: req.query.limit || 5,
+    };
+    if (req.query.sort) {
+      const sortingValue = req.query.sort.split('.');
+      params.sort = {
+        key: sortingValue[0],
+        value: sortingValue[1] ? sortingValue[1].toUpperCase() : 'ASC',
+      };
+    }
+    if (req.query.q) {
+      params.search = req.query.q;
+    }
+
+    const resultQuery = await GetProducts(params);
+    console.log(resultQuery);
 
     if (resultQuery) {
+      const totalData = resultQuery[1][0].total;
+      const totalPages = Math.ceil(totalData / parseInt(params.limit));
       res.status(200).send({
         status: 'success',
-        result: resultQuery[1],
+        result: {
+          data: resultQuery[2],
+          metadata: {
+            pagination: {
+              currentPage: params.page,
+              totalPages: totalPages,
+              nextPage: parseInt(params.page) < totalPages,
+              prevPage: parseInt(params.page) > 1,
+              limit: parseInt(params.limit),
+              total: totalData,
+            },
+          },
+        },
       });
     } else throw new Error('Get Failed');
   } catch (error) {
