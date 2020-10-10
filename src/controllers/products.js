@@ -1,3 +1,5 @@
+require('dotenv').config();
+const firebaseadmin = require('../configs/firebase');
 const {
   CreateProduct,
   DeleteProduct,
@@ -5,6 +7,7 @@ const {
   GetProducts,
   GetProduct,
 } = require('../models/products');
+const { patch } = require('../routes/auth');
 
 exports.CreateProduct = async (req, res, next) => {
   try {
@@ -14,13 +17,29 @@ exports.CreateProduct = async (req, res, next) => {
     if (!req.file) {
       throw new Error('Image is required!');
     }
-
+    console.log(process.env.NODE_ENV);
     const { category_id, name, price, stock, description } = req.body;
-    req.body.image = req.file.path;
     req.body.store_id = req.store_id;
 
-    const resultQuery = await CreateProduct(req.body);
+    let image = '';
+    if (process.env.NODE_ENV === 'production') {
+      const bucket = firebaseadmin.storage().bucket();
+      const pathFile = `products/${req.auth.id}${name}${new Date().getTime()}.${
+        req.file.mimetype.split('/')[1]
+      }`;
+      const data = bucket.file(pathFile);
+      await data.save(req.file.buffer);
+      req.body.image = pathFile; //firebase upload file name
+      image = `${process.env.FIREBASE_STORAGE_URL}${encodeURIComponent(
+        pathFile
+      )}?alt=media`;
+    } else {
+      req.body.image = req.file.path; //local upload file name
+      image = `${process.env.APP_URL}uploads/${req.file.path}`;
+    }
 
+    const resultQuery = await CreateProduct(req.body);
+    console.log(resultQuery);
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
@@ -28,6 +47,7 @@ exports.CreateProduct = async (req, res, next) => {
           id: resultQuery[1].insertId,
           store_id: req.body.store_id,
           category_id,
+          image,
           name,
           price,
           stock,

@@ -1,12 +1,3 @@
-/*
- TODO:
- - make crud roles
- - using group routing
- 
- NOTE:
- - url-pattern: domain.com/rest/v1/resource/params
- */
-
 require('dotenv').config();
 
 const express = require('express');

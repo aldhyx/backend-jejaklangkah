@@ -9,11 +9,24 @@ const storage = multer.diskStorage({
   },
 });
 
-const UploadFile = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 2,
-  },
-});
+const memoryStorage = multer.memoryStorage();
+let UploadFile = '';
+if (process.env.NODE_ENV === 'production') {
+  // firebase upload
+  UploadFile = multer({
+    storage: memoryStorage,
+    limits: {
+      fileSize: 1024 * 1024 * 2,
+    },
+  });
+} else {
+  // local upload
+  UploadFile = multer({
+    storage: storage,
+    limits: {
+      fileSize: 1024 * 1024 * 2,
+    },
+  });
+}
 
 module.exports = UploadFile;
