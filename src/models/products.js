@@ -2,17 +2,17 @@ const { dbConnection } = require('../configs/db');
 
 const useDB = `USE ${process.env.DB_NAME}`;
 const tableName = 'products';
-/*
- Todo:
- * create
- * update
- * delete
- * get all
- * get
-*/
 
 exports.CreateProduct = (body) => {
-  const { store_id, category_id, name, price, stock, description } = body;
+  const {
+    store_id,
+    category_id,
+    name,
+    price,
+    stock,
+    description,
+    image,
+  } = body;
 
   return new Promise((resolve, reject) => {
     dbConnection.query(
@@ -22,10 +22,11 @@ exports.CreateProduct = (body) => {
         name,
         price,
         stock,
-        description
-        ) VALUE(?,?,?,?,?,?);
+        description,
+        image
+        ) VALUE(?,?,?,?,?,?,?);
         `,
-      [store_id, category_id, name, price, stock, description],
+      [store_id, category_id, name, price, stock, description, image],
       (error, result) => {
         if (error) return reject(new Error(error));
         return resolve(result);
@@ -34,12 +35,13 @@ exports.CreateProduct = (body) => {
   });
 };
 
-exports.DeleteProduct = (id) => {
+exports.DeleteProduct = (id, store_id) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
       `
       ${useDB};
-      SELECT * FROM ${tableName} WHERE _id=${id};`,
+      SELECT * FROM ${tableName} WHERE _id=? AND store_id=?;`,
+      [id, store_id],
       (error, result) => {
         if (error || !result[1][0]) {
           return reject(new Error(`Product with id ${id} doesn't exists`));
@@ -62,12 +64,13 @@ exports.DeleteProduct = (id) => {
   });
 };
 
-exports.UpdateProduct = (id, body) => {
+exports.UpdateProduct = (id, store_id, body) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
       `
       ${useDB};
-      SELECT * FROM ${tableName} WHERE _id=${id};`,
+      SELECT * FROM ${tableName} WHERE _id=? AND store_id=?;`,
+      [id, store_id],
       (error, result) => {
         if (error || !result[1][0]) {
           return reject(new Error(`Product with id ${id} doesn't exists`));
@@ -80,8 +83,9 @@ exports.UpdateProduct = (id, body) => {
             ${Object.keys(body)
               .map((v) => `${v}='${body[v]}'`)
               .join(',')}
-            WHERE _id=${id};
+            WHERE _id=? AND store_id=?;
         `,
+          [id, store_id],
           (error, result) => {
             if (error) {
               return reject(new Error(error));
