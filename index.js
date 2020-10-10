@@ -16,6 +16,8 @@ const app = express();
 
 const PORT = process.env.APP_PORT || 5000;
 const urlPrefixV1 = '/rest/v1';
+const path = require('path');
+const { ValidationError } = require('express-validation');
 
 // write log on terminal
 app.use(logger('tiny'));
@@ -26,6 +28,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
+// make static path
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // NOTE: Start Router
 // import routes
 const AuthRouter = require('./src/routes/auth');
@@ -49,6 +53,13 @@ app.use(`${urlPrefixV1}/carts`, CartsRouter);
 
 // NOTE: End Router
 
+app.use(function (err, req, res, next) {
+  if (err instanceof ValidationError) {
+    return res.status(err.statusCode).json(err);
+  }
+
+  next();
+});
 // error middleware
 // run if no routes matching
 app.use((req, res, next) => {
