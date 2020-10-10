@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon index.js",
+    "live": "NODE_ENV=production nodemon index.js",
     "prod": "NODE_ENV=production pm2 start index.js --name 'jejaklangkah-api' --watch",
+    "start": "npm run live",
     "migrate": "node ./src/migrations/index.js"
   },
   "keywords": [
