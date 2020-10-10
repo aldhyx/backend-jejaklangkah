@@ -33,12 +33,13 @@ exports.CreateAddress = (body) => {
   });
 };
 
-exports.DeleteAddress = (id) => {
+exports.DeleteAddress = (id, user_id) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
       `
       ${useDB};
-      SELECT * FROM ${tableName} WHERE _id=${id};`,
+      SELECT * FROM ${tableName} WHERE _id=? AND user_id=?;`,
+      [id, user_id],
       (error, result) => {
         if (error || !result[1][0]) {
           return reject(new Error(`Address with id ${id} doesn't exists`));
@@ -61,12 +62,13 @@ exports.DeleteAddress = (id) => {
   });
 };
 
-exports.UpdateAddress = (id, body) => {
+exports.UpdateAddress = (id, user_id, body) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
       `
       ${useDB};
-      SELECT * FROM ${tableName} WHERE _id=${id};`,
+      SELECT * FROM ${tableName} WHERE _id=? AND user_id=?;`,
+      [id, user_id],
       (error, result) => {
         if (error || !result[1][0]) {
           return reject(new Error(`Address with id ${id} doesn't exists`));
@@ -93,11 +95,12 @@ exports.UpdateAddress = (id, body) => {
   });
 };
 
-exports.GetAddresses = () => {
+exports.GetAddresses = (user_id) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
-      `${useDB}; SELECT * FROM ${tableName};
+      `${useDB}; SELECT * FROM ${tableName} WHERE user_id=?;
       `,
+      [user_id],
       (error, result) => {
         if (error) return reject(new Error(error));
         return resolve(result);
@@ -106,13 +109,16 @@ exports.GetAddresses = () => {
   });
 };
 
-exports.GetAddress = (id) => {
+exports.GetAddress = (id, user_id) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
-      `${useDB}; SELECT * FROM ${tableName} WHERE _id=${id};
+      `${useDB}; SELECT * FROM ${tableName} WHERE _id=? AND user_id=?;
       `,
+      [id, user_id],
       (error, result) => {
-        if (error) return reject(new Error(error));
+        if (error || !result[1][0]) {
+          return reject(new Error(`Address with id ${id} doesn't exists`));
+        }
         return resolve(result);
       }
     );

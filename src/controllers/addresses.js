@@ -9,30 +9,25 @@ const {
 exports.CreateAddress = async (req, res, next) => {
   try {
     if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
+      throw new Error('No data to update');
     }
 
     const {
-      user_id,
       address_name,
       address,
       city,
       province,
       is_default_address,
     } = req.body;
-
-    if (!user_id) {
-      throw new Error('User id is invalid');
-    }
+    req.body.user_id = req.auth.id;
 
     const resultQuery = await CreateAddress(req.body);
-    console.log(resultQuery);
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
           id: resultQuery[1].insertId,
-          user_id,
+          user_id: req.auth.id,
           address_name,
           address,
           city,
@@ -58,13 +53,14 @@ exports.DeleteAddress = async (req, res, next) => {
       throw new Error('Id is required');
     }
 
-    const resultQuery = await DeleteAddress(req.params.id);
+    const resultQuery = await DeleteAddress(req.params.id, req.auth.id);
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
           id: req.params.id,
+          user_id: req.auth.id,
         },
       });
     } else throw new Error('Update Failed');
@@ -97,13 +93,18 @@ exports.UpdateAddress = async (req, res) => {
       }
     });
 
-    const resultQuery = await UpdateAddress(req.params.id, dataToUpdate);
+    const resultQuery = await UpdateAddress(
+      req.params.id,
+      req.auth.id,
+      dataToUpdate
+    );
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
           id: req.params.id,
+          user_id: req.auth.id,
           address_name: req.body.address_name,
           address: req.body.address,
           city: req.body.city,
@@ -124,7 +125,7 @@ exports.UpdateAddress = async (req, res) => {
 
 exports.GetAddresses = async (req, res) => {
   try {
-    const resultQuery = await GetAddresses();
+    const resultQuery = await GetAddresses(req.auth.id);
 
     if (resultQuery) {
       res.status(200).send({
@@ -145,11 +146,7 @@ exports.GetAddresses = async (req, res) => {
 
 exports.GetAddress = async (req, res) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
-    const resultQuery = await GetAddress(req.params.id);
+    const resultQuery = await GetAddress(req.params.id, req.auth.id);
 
     if (resultQuery) {
       res.status(200).send({
