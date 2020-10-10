@@ -56,11 +56,28 @@ exports.GetUserData = (username) => {
   return new Promise((resolve, reject) => {
     dbConnection.query(
       `${useDB}; 
-        SELECT _id, username, password FROM users WHERE username=?;
+        SELECT _id, username, password, role FROM users WHERE username=?;
         `,
       [username],
       (error, result) => {
         if (error) return reject(new Error(error));
+        return resolve(result);
+      }
+    );
+  });
+};
+
+exports.GetSellerStore = (user_id) => {
+  return new Promise((resolve, reject) => {
+    dbConnection.query(
+      `${useDB}; 
+        SELECT _id FROM stores WHERE user_id=?;
+        `,
+      [user_id],
+      (error, result) => {
+        if (error || !result) {
+          return reject(new Error(error || 'You dont have a store!'));
+        }
         return resolve(result);
       }
     );
