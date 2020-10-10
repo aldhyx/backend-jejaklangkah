@@ -1,4 +1,6 @@
 const ReviewsRouter = require('express').Router();
+const { Authentication, isRoleAdmin } = require('../middleware/auth');
+
 const {
   CreateReview,
   DeleteReview,
@@ -7,9 +9,9 @@ const {
   GetReview,
 } = require('../controllers/reviews');
 
-ReviewsRouter.post('/', CreateReview);
-ReviewsRouter.delete('/:id', DeleteReview);
-ReviewsRouter.patch('/:id', UpdateReview);
+ReviewsRouter.post('/', Authentication, CreateReview);
+ReviewsRouter.delete('/:id', Authentication, DeleteReview);
+ReviewsRouter.patch('/:id', Authentication, UpdateReview);
 ReviewsRouter.get('/', GetReviews);
 ReviewsRouter.get('/:id', GetReview);
 
