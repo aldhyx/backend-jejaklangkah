@@ -8,20 +8,15 @@ const {
 
 exports.CreateStore = async (req, res, next) => {
   try {
-    if (!(Object.keys(req.body).length > 0)) {
-      throw new Error('Please add data to update');
-    }
+    const { name, address, city, province, description } = req.body;
 
-    const { user_id, name, address, city, province, description } = req.body;
-
-    const resultQuery = await CreateStore(req.body);
-    console.log(resultQuery);
+    const resultQuery = await CreateStore(req.auth.id, req.body);
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
           id: resultQuery[1].insertId,
-          user_id,
+          user_id: req.auth.id,
           name,
           address,
           city,
@@ -31,7 +26,7 @@ exports.CreateStore = async (req, res, next) => {
       });
     } else throw new Error('Create Failed');
   } catch (error) {
-    console.log('Error on roles controller => ', error);
+    console.log('Error on store controller => ', error);
     res.status(202).send({
       status: 'error',
       result: {
@@ -43,17 +38,14 @@ exports.CreateStore = async (req, res, next) => {
 
 exports.DeleteStore = async (req, res, next) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
-    const resultQuery = await DeleteStore(req.params.id);
+    const resultQuery = await DeleteStore(req.params.id, req.auth.id);
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
           id: req.params.id,
+          user_id: req.auth.id,
         },
       });
     } else throw new Error('Update Failed');
@@ -70,10 +62,6 @@ exports.DeleteStore = async (req, res, next) => {
 
 exports.UpdateStore = async (req, res) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
     if (!(Object.keys(req.body).length > 0)) {
       throw new Error('Please add data to update');
     }
@@ -86,14 +74,18 @@ exports.UpdateStore = async (req, res) => {
       }
     });
 
-    const resultQuery = await UpdateStore(req.params.id, dataToUpdate);
+    const resultQuery = await UpdateStore(
+      req.params.id,
+      req.auth.id,
+      dataToUpdate
+    );
 
     if (resultQuery) {
       res.status(200).send({
         status: 'success',
         result: {
           id: req.params.id,
-          name: req.body.name,
+          user_id: req.auth.id,
         },
       });
     } else throw new Error('Update Failed');
@@ -131,11 +123,7 @@ exports.GetStores = async (req, res) => {
 
 exports.GetStore = async (req, res) => {
   try {
-    if (!req.params.id) {
-      throw new Error('Id is required');
-    }
-
-    const resultQuery = await GetStore(req.params.id);
+    const resultQuery = await GetStore(req.params.id, req.auth.id);
 
     if (resultQuery) {
       res.status(200).send({
